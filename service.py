@@ -38,3 +38,54 @@ def  create_task(title, discription, duration):
         conn.commit()
         cur.close()
         conn.close()
+
+
+def update_task(task_id, title, discription, duration):
+    conn = contion_db()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("""
+            UPDATE tasks
+            SET title = %s,
+                discription = %s,
+                duration = %s
+            WHERE task_id = %s
+        """, (title, discription, duration, task_id))
+
+        if cur.rowcount == 0:
+            print("Task not found.")
+        else:
+            conn.commit()
+            print("Task updated successfully.")
+
+    except Exception as error:
+        conn.rollback()
+        print(f"Error updating task: {error}")
+
+    finally:
+        cur.close()
+        conn.close()
+
+
+def delete_task(task_id):
+    conn = contion_db()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("""
+            UPDATE tasks
+            SET is_active = FALSE
+            WHERE task_id = %s
+        """, (task_id,))
+
+        conn.commit()
+        print("Task deleted successfully.")
+
+    except Exception as error:
+        conn.rollback()
+        print(f"Error deleting task: {error}")
+
+    finally:
+        cur.close()
+        conn.close()
