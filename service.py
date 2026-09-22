@@ -39,7 +39,6 @@ def  create_task(title, discription, duration):
         cur.close()
         conn.close()
 
-
 def update_task(task_id, title, discription, duration):
     conn = contion_db()
     cur = conn.cursor()
@@ -51,22 +50,23 @@ def update_task(task_id, title, discription, duration):
                 discription = %s,
                 duration = %s
             WHERE task_id = %s
+            RETURNING task_id
         """, (title, discription, duration, task_id))
 
-        if cur.rowcount == 0:
+        task = cur.fetchone()
+
+        if task is None:
             print("Task not found.")
         else:
             conn.commit()
             print("Task updated successfully.")
 
     except Exception as error:
-        conn.rollback()
         print(f"Error updating task: {error}")
 
     finally:
         cur.close()
         conn.close()
-
 
 def delete_task(task_id):
     conn = contion_db()
@@ -83,7 +83,6 @@ def delete_task(task_id):
         print("Task deleted successfully.")
 
     except Exception as error:
-        conn.rollback()
         print(f"Error deleting task: {error}")
 
     finally:
